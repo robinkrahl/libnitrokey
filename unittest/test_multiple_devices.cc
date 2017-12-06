@@ -92,8 +92,6 @@ TEST_CASE("Use API", "[BASIC]") {
 }
 
 
-
-
 TEST_CASE("Use API ID", "[BASIC]") {
     auto nm = NitrokeyManager::instance();
     nm->set_loglevel(2);
@@ -109,7 +107,6 @@ TEST_CASE("Use API ID", "[BASIC]") {
             auto retry_count = nm->get_admin_retry_count();
             std::cout << i << " " << to_string(retry_count) << std::endl;
         }
-        this_thread::sleep_for(10ms);
     }
     std::cout << "finished" << std::endl;
 }

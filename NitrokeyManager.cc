@@ -80,6 +80,8 @@ using nitrokey::misc::strcpyT;
         set_debug(true);
     }
     NitrokeyManager::~NitrokeyManager() {
+        std::lock_guard<std::mutex> lock(mex_dev_com_manager);
+
         for (auto d : connected_devices){
             if (d.second == nullptr) continue;
             d.second->disconnect();
@@ -103,11 +105,15 @@ using nitrokey::misc::strcpyT;
     }
 
     std::vector<std::string> NitrokeyManager::list_devices(){
+        std::lock_guard<std::mutex> lock(mex_dev_com_manager);
+
         auto p = make_shared<Stick20>();
         return p->enumerate(); // make static
     }
 
     std::vector<std::string> NitrokeyManager::list_devices_by_cpuID(){
+        std::lock_guard<std::mutex> lock(mex_dev_com_manager);
+
         std::vector<std::string> res;
         auto d = make_shared<Stick20>();
         const auto v = d->enumerate();
@@ -142,7 +148,10 @@ using nitrokey::misc::strcpyT;
  * @return
  */
     bool NitrokeyManager::connect_with_ID(const std::string id) {
-        if (connected_devices_byID.find(id) == connected_devices_byID.end()) return false;
+        std::lock_guard<std::mutex> lock(mex_dev_com_manager);
+
+        auto position = connected_devices_byID.find(id);
+        if (position == connected_devices_byID.end()) return false;
 
         auto d = connected_devices_byID[id];
         device = d;
@@ -152,6 +161,8 @@ using nitrokey::misc::strcpyT;
         }
         catch (const DeviceCommunicationException &){
             d->disconnect();
+            connected_devices_byID[id] = nullptr;
+            connected_devices_byID.erase(position);
             return false;
         }
         return true;
