@@ -335,7 +335,7 @@ using nitrokey::misc::strcpyT;
         return response.data();
       }
       catch (DeviceSendingFailure &e){
-        disconnect();
+//        disconnect();
         throw;
       }
     }
