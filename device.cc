@@ -69,7 +69,7 @@ bool Device::_disconnect() {
   LOG(std::string(__FUNCTION__) + std::string(m_model == DeviceModel::PRO ? "PRO" : "STORAGE"), Loglevel::DEBUG_L2);
   LOG(std::string(__FUNCTION__) +  std::string(" *IN* "), Loglevel::DEBUG_L2);
 
-  LOG(std::string("Disconnection success: ") + std::to_string(mp_devhandle == nullptr) + " ("+m_path+")", Loglevel::DEBUG_L1);
+  LOG(std::string("Disconnection: handle already freed: ") + std::to_string(mp_devhandle == nullptr) + " ("+m_path+")", Loglevel::DEBUG_L1);
   if(mp_devhandle == nullptr) return false;
 
   hid_close(mp_devhandle);
