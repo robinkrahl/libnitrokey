@@ -4,6 +4,8 @@ from time import sleep
 import pytest
 from collections import defaultdict
 
+from tqdm import tqdm
+
 from conftest import skip_if_device_version_lower_than
 from constants import DefaultPasswords, DeviceErrorCode, bb
 from misc import gs, wait
@@ -34,20 +36,25 @@ def test_get_status_storage_multiple(C):
     devices_count = len(devices_list)
     assert devices_count != 0
     b = 0
-    while b/devices_count < 100:
-        b = defaultdict (lambda: 0)
-        
-        ids = gs(C.NK_list_devices_by_cpuID())
-        devices_list = ids.split(b';')
-        devices_count = len(devices_list)
 
-        for s in devices_list:
-            res = C.NK_connect_with_ID(s)
-            if res != 1: continue
-            b[s] += C.NK_get_progress_bar_value()
-        print(b)
-        b = sum(b.values())
-        print('{}: {}'.format(b, int(b/devices_count) * '='))
-        sleep(5)
+    last_b = 0
+    with tqdm(total=200) as pbar:
+        while b/devices_count < 100:
+            pbar.update(b - last_b)
+
+            b = defaultdict (lambda: 0)
+
+            ids = gs(C.NK_list_devices_by_cpuID())
+            devices_list = ids.split(b';')
+            devices_count = len(devices_list)
+
+            for s in devices_list:
+                res = C.NK_connect_with_ID(s)
+                if res != 1: continue
+                b[s] += C.NK_get_progress_bar_value()
+            print(b)
+            b = sum(b.values())
+            print('{}: {}'.format(b, int(b/devices_count) * '='))
+            sleep(5)
 
 
