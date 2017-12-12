@@ -760,7 +760,7 @@ using nitrokey::misc::strcpyT;
         }
         case DeviceModel::STORAGE:{
           auto status = stick20::GetDeviceStatus::CommandTransaction::run(device);
-          return status.data().versionInfo.minor + (status.data().versionInfo.build_iteration != 0)? 1 : 0;
+          return status.data().versionInfo.minor + ((status.data().versionInfo.build_iteration != 0)? 1 : 0);
         }
       }
       return 0;
