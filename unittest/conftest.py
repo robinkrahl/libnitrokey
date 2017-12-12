@@ -13,7 +13,7 @@ def skip_if_device_version_lower_than(allowed_devices):
 
 
 @pytest.fixture(scope="module")
-def C(request):
+def C(request=None):
     fp = '../NK_C_API.h'
 
     declarations = []
@@ -78,7 +78,8 @@ def C(request):
         C.NK_logout()
         print('Finished')
 
-    request.addfinalizer(fin)
+    if request:
+        request.addfinalizer(fin)
     # C.NK_set_debug(True)
     C.NK_set_debug_level(int(os.environ.get('LIBNK_DEBUG', 3)))
 
