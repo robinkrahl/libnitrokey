@@ -371,6 +371,12 @@ namespace nitrokey {
                       dev->m_counters.smartcard_busy++;
                     break;
                   }
+                  if (resp.device_status == static_cast<uint8_t>(stick10::device_status::busy) &&
+                    static_cast<stick20::device_status>(resp.storage_status.device_status)
+                    == stick20::device_status::busy_progressbar){
+                      successful_communication = true;
+                      break;
+                  }
                   LOG(std::string("Retry status - dev status, awaited cmd crc, correct packet CRC: ")
                                   + std::to_string(resp.device_status) +
                                   " " + std::to_string(CRC_equal_awaited) +
