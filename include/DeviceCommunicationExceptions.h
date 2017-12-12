@@ -69,5 +69,11 @@ public:
   uint8_t getType() const {return 5;};
 };
 
+class SmartcardBusy: public DeviceSendingFailure {
+public:
+  SmartcardBusy(std::string msg) : DeviceSendingFailure(msg){}
+  uint8_t getType() const {return 6;};
+};
+
 
 #endif //LIBNITROKEY_DEVICECOMMUNICATIONEXCEPTIONS_H

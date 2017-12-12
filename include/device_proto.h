@@ -272,7 +272,9 @@ namespace nitrokey {
               }
 
               bool successful_communication = false;
+              bool resend_packet = false;
               int receiving_retry_counter = 0;
+              int resending_counter = 10;
               int sending_retry_counter = dev->get_retry_sending_count();
               while (sending_retry_counter-- > 0) {
                 dev->m_counters.sends_executed++;
@@ -362,8 +364,11 @@ namespace nitrokey {
                   }
                   if (resp.device_status == static_cast<uint8_t>(stick10::device_status::busy) &&
                       static_cast<stick20::device_status>(resp.storage_status.device_status)
-                      == stick20::device_status::busy_progressbar){
-                    successful_communication = true;
+                      == stick20::device_status::busy && resp.storage_status.progress_bar_value == 1){
+                      // v0.49: smartcard busy hence device dropped command,
+                      // resend the packet after a delay
+                      resend_packet = true;
+                      dev->m_counters.smartcard_busy++;
                     break;
                   }
                   LOG(std::string("Retry status - dev status, awaited cmd crc, correct packet CRC: ")
@@ -384,6 +389,20 @@ namespace nitrokey {
                   LOG(".", Loglevel::DEBUG_L1);
                   std::this_thread::sleep_for(retry_timeout);
                   continue;
+                }
+
+                // back to sending loop
+                if (resend_packet) {
+                  if(resending_counter-- >0){
+                    LOG(std::string("Resending command due to Smartcard being busy requested"), Loglevel::DEBUG_L1);
+                    resend_packet = false;
+                    sending_retry_counter++; //resending due to smartcard_busy / retry_later status
+                    successful_communication = false;
+                    std::this_thread::sleep_for(200ms);
+                  } else {
+                    LOG(std::string("Throw: Smartcard BUSY while executing command "), Loglevel::DEBUG_L1);
+                    throw SmartcardBusy("Smartcard BUSY while executing command");
+                  }
                 }
                 if (successful_communication) break;
                 LOG(std::string("Resending (outer loop) "), Loglevel::DEBUG_L2);

@@ -243,6 +243,7 @@ std::string Device::ErrorCounters::get_as_string() {
   ss << "(";
   p(busy);
   p(busy_progressbar);
+  p(smartcard_busy);
   p(CRC_other_than_awaited);
   p(wrong_CRC);
   ss << "), ";
