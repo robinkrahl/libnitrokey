@@ -48,6 +48,7 @@ public:
     cnt recv_executed;
     cnt sends_executed;
     cnt busy_progressbar;
+    cnt smartcard_busy;
     cnt command_result_not_equal_0_recv;
     cnt communication_successful;
     cnt low_level_reconnect;
