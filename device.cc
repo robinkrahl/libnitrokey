@@ -193,14 +193,14 @@ void Device::set_retry_delay(const std::chrono::milliseconds delay){
 }
 
 Stick10::Stick10():
-  Device(0x20a0, 0x4108, DeviceModel::PRO, 100ms, 5, 100ms)
+  Device(0x20a0, 0x4108, DeviceModel::PRO, 40ms, 5, 40ms)
   {
     setDefaultDelay();
   }
 
 
 Stick20::Stick20():
-  Device(0x20a0, 0x4109, DeviceModel::STORAGE, 40ms, 25, 40ms)
+  Device(0x20a0, 0x4109, DeviceModel::STORAGE, 40ms, 10, 40ms)
   {
     setDefaultDelay();
   }
