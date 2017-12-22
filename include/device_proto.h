@@ -343,9 +343,13 @@ namespace nitrokey {
                       , Loglevel::DEBUG_L1);
                     }
                   }
-                  if (resp.device_status == static_cast<uint8_t>(stick10::device_status::busy) &&
-                      static_cast<stick20::device_status>(resp.storage_status.device_status)
-                      == stick20::device_status::busy && resp.storage_status.progress_bar_value == 1){
+                  if (resp.storage_status.progress_bar_value == 1){
+                    LOG("Progress bar 1", Loglevel::DEBUG_L1);
+                  }
+                  if (static_cast<stick20::device_status>(resp.storage_status.device_status)
+                      == stick20::device_status::busy &&
+                      resp.storage_status.progress_bar_value == 1
+                      ){
                       // v0.49: smartcard busy hence device dropped command,
                       // resend the packet after a delay
                       resend_packet = true;
