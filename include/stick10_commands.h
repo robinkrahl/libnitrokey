@@ -370,8 +370,8 @@ class GetStatus : Command<CommandID::GET_STATUS> {
     union {
       uint16_t firmware_version;
       struct {
-        uint8_t major;
         uint8_t minor;
+        uint8_t major;
       } firmware_version_st;
     };
     union{
