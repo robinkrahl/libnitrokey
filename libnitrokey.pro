@@ -7,7 +7,10 @@ CONFIG   += c++14 shared debug
 TEMPLATE     = lib
 TARGET = nitrokey
 
-VERSION = 3.3
+VERSION_MAJOR = 3
+VERSION_MINOR = 3
+VERSION_GIT = $$system(git describe --always)
+VERSION = $${VERSION_MAJOR}.$${VERSION_MINOR}
 QMAKE_TARGET_COMPANY = Nitrokey
 QMAKE_TARGET_PRODUCT = libnitrokey
 QMAKE_TARGET_DESCRIPTION = Communicate with Nitrokey stick devices in a clean and easy manner
@@ -44,6 +47,19 @@ SOURCES = \
    $$PWD/NK_C_API.cc
 
 
+VERSION_SOURCES = $$PWD/version.cc.in
+
+
+sed_version.output = ${QMAKE_FILE_BASE}
+sed_version.commands = cat ${QMAKE_FILE_NAME} \
+    | sed 's/@PROJECT_VERSION_MAJOR@/$${VERSION_MAJOR}/' \
+    | sed 's/@PROJECT_VERSION_MINOR@/$${VERSION_MINOR}/' \
+    | sed 's/@PROJECT_VERSION_GIT@/$${VERSION_GIT}/' \
+    > ${QMAKE_FILE_OUT}
+sed_version.input = VERSION_SOURCES
+sed_version.variable_out = SOURCES
+QMAKE_EXTRA_COMPILERS += sed_version
+
 tests {
     SOURCES += \
        $$PWD/unittest/catch_main.cpp \
@@ -53,6 +69,7 @@ tests {
        $$PWD/unittest/test_C_API.cpp \
        $$PWD/unittest/test_HOTP.cc
 }
+
 
 unix:!macx{
 #   SOURCES += $$PWD/hidapi/linux/hid.c
